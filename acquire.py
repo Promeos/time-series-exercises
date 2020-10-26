@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
+import os
 
-###################### Acquire Telco Data - 2 Year Contracts ######################
+###################### REST API Functions ######################
 def base_url():
     '''
     Returns base url to acquire H-E-B data.
@@ -62,7 +63,7 @@ def page_iterator(data, data_path, stop_page):
     '''
     Accepts an endpoint name, path to endpoint, and number of pages to acquire.
     
-    Return a specific H-E-B dataset as pandas DataFrame.
+    Return a specific H-E-B dataset as a pandas DataFrame.
 
     Parameters
     ----------
@@ -87,7 +88,8 @@ def page_iterator(data, data_path, stop_page):
 
     return df
 
-###################### Acquire Telco Data - 2 Year Contracts ######################
+
+###################### Acquire H-E-B data ######################
 def acquire_heb_data(dataset='stores'):
     '''
     Acquires H-E-B store data from https://python.zach.lol using REST API
@@ -134,7 +136,11 @@ def acquire_heb_data(dataset='stores'):
     df.reset_index(drop=True, inplace=True)
     return df
 
-###################### Acquire Telco Data - 2 Year Contracts ######################
+def check_local_cache(data):
+    if os.path.isfile(f'{data}.csv'):
+        df = pd.read(f'{data}.csv', in)
+
+###################### Load Main HEB Dataset ######################
 def load_heb_data():
     '''
     Return a cached dataset of H-E-B data: stores, items, and sales
@@ -150,7 +156,7 @@ def load_heb_data():
     df = pd.read_csv('store_sales_data.csv')
     return df
 
-###################### Acquire Telco Data - 2 Year Contracts ######################
+###################### Load Germany's Open Power Systems Data  ######################
 def acquire_open_power_systems():
     """
     Open Power Systems Data for Germany - 2006-2017
