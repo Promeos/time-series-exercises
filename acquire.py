@@ -89,6 +89,41 @@ def page_iterator(data, data_path, stop_page):
     return df
 
 
+def check_local_cache(data):
+    '''
+    Accepts an endpoint from https://python.zach.lol and checks to see if a local
+    cached version of the data exists
+    
+    Returns endpoint data as a pandas DataFrame if a local cache exists
+    Returns False if a local cache does not exist.
+    
+    Parameters
+    ----------
+    data : str
+        H-E-B datasets
+        --------------
+        'stores': Checks for a cached file of the 'stores' dataset
+        'items' : Checks for a cached file of the 'items' dataset
+        'sales' : Checks for a cached file of the 'sales' dataset
+
+        Germany dataset
+        ---------------
+        'power' : Open Power Systems Data for Germany
+        
+    Returns
+    -------
+    Return cached file as a pandas DataFrame if : os.path.isfile(file_name) == True
+    Return False otherwise
+    '''
+    file_name = f'{data}.csv'
+    
+    if os.path.isfile(file_name):
+        return pd.read_csv(file_name, index_col=False)
+    else:
+        return False
+
+
+
 ###################### Acquire H-E-B data ######################
 def acquire_heb_data(dataset='stores'):
     '''
@@ -124,21 +159,25 @@ def acquire_heb_data(dataset='stores'):
     -------
     pandas DataFrame
     '''
-    path = f'/api/v1/{dataset}'
-    endpoint = response_endpoint(path)
-    max_page_num = max_page(endpoint)
+    cache = check_local_cache(data=dataset)
     
-    df = page_iterator(data=f'{dataset}',
-                       data_path=path,
-                       stop_page=max_page_num
-                       )
-    
-    df.reset_index(drop=True, inplace=True)
-    return df
+    if cache is False:
+        path = f'/api/v1/{dataset}'
+        endpoint = response_endpoint(path)
+        max_page_num = max_page(endpoint)
+        
+        df = page_iterator(data=f'{dataset}',
+                        data_path=path,
+                        stop_page=max_page_num
+                        )
+        
+        df.reset_index(drop=True, inplace=True)
+        df.to_csv(f'{dataset}.csv', index=False)
+        return df
+    else:
+        return cache
 
-def check_local_cache(data):
-    if os.path.isfile(f'{data}.csv'):
-        df = pd.read(f'{data}.csv', in)
+
 
 ###################### Load Main HEB Dataset ######################
 def load_heb_data():
@@ -170,6 +209,12 @@ def acquire_open_power_systems():
     -------
     pandas DataFrame
     """
-    opsd_url = 'https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv'
-    df = pd.read_csv(opsd_url)
-    return df
+    cache = check_local_cache(data='power')
+    
+    if cache is not True:
+        open_power_systems_url = 'https://raw.githubusercontent.com/jenfly/opsd/master/opsd_germany_daily.csv'
+        df = pd.read_csv(open_power_systems_url)
+        df.to_csv('power.csv', index=False)
+        return df
+    else:
+        return cache
