@@ -21,12 +21,13 @@ def prepare_store_data(df):
     # Format the date of the column
     df.sale_date = pd.to_datetime(df.sale_date, format=('%a, %d %b %Y %H:%M:%S %Z'))
     df = df.set_index('sale_date').sort_index()
+    df.rename(columns={'sale_amount': 'quantity'}
     
     # Create new columns: month, day of week, and sales total
     df = df.assign(
         month = df.index.month,
         day_of_week = df.index.day_name(),
-        sales_total = df.sale_amount * df.item_price
+        sales_total = df.quantity * df.item_price
     )
     
     return df
@@ -48,7 +49,9 @@ def prepare_ops_data(df):
         Prepared open power systems data
     '''
     df.Date = pd.to_datetime(df.Date)
-    df = df.set_index('Date').sort_index()
+    df.columns = [column.lower() for column in df]
+    df.rename(columns={'wind+solar': 'wind_and_solar'}, inplace=True)
+    df = df.set_index('date').sort_index()
     
     df = df.assign(
     month=df.index.month,
