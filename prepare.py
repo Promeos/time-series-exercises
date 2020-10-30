@@ -21,7 +21,7 @@ def prepare_store_data(df):
     # Format the date of the column
     df.sale_date = pd.to_datetime(df.sale_date, format=('%a, %d %b %Y %H:%M:%S %Z'))
     df = df.set_index('sale_date').sort_index()
-    df.rename(columns={'sale_amount': 'quantity'}
+    df.rename(columns={'sale_amount': 'quantity'}, inplace=True)
     
     # Create new columns: month, day of week, and sales total
     df = df.assign(
