@@ -1,4 +1,4 @@
-![Time Series Analysis Header](time_series_analysis.png)
+![Time Series Analysis Header](./visuals/time_series_analysis.png)
 
 A collection of exercises to build foundational concepts using Time Series Analysis. These exercises are part of [Codeup's](https://codeup.com/) data science curriculum.
 
