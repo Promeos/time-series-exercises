@@ -60,3 +60,21 @@ def prepare_ops_data(df):
     
     df = df.fillna(0)
     return df
+
+############################ Prepare Vega_datasets #################################
+
+def prep_sf_temps(df):
+    '''
+    
+    '''
+    df.date = pd.to_datetime(df.date)
+    prepped_df = df.set_index('date').sort_index()
+    return prepped_df
+    
+
+def resample_temperature(df):
+    '''
+    
+    '''
+    temp_resampled = df.temp.resample('D').agg(['min', 'mean', 'max'])
+    return temp_resampled
